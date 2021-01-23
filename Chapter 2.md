@@ -2,11 +2,11 @@
 
 -the narrator(叙事者、讲述者) crashes in the desert(沙漠、荒漠) and makes the acquaintance(相识) of the little prince
 
-So I lived(过着) my life(生活) alone, without anyone that I could really talk to, until I had an accident with my plane in the Desert of Sahara, six years ago. Something was broken in my engine. And as I had with me neither a mechanic(机械师、技工、机修工) nor any passengers, I set myself to attempt the difficult repairs all alone. It was a question of life or death for me: I had scarcely(刚刚，勉强，几乎不) enough drinking water to last a week.
-　　The first night, then, I went to sleep on the sand, a thousand miles from any human habitation(住所、聚住地). I was more isolated(孤立的、孤独的、偏远的) than a shipwrecked(遭遇海难的) sailor(水手、海员) on a raft(筏子) in the middle of the ocean. Thus you can imagine my amazement, at sunrise, when I was awakened by an odd(奇怪的) little voice. It said: 
-　　"If you please-- draw me a sheep(羊、绵羊、胆小鬼)!"
-　　"What!"
-　　"Draw me a sheep!"
+​		So I lived(过着) my life(生活) alone, without anyone that I could really talk to, until I had an accident with my plane in the Desert of Sahara, six years ago. Something was broken in my engine. And as I had with me neither a mechanic(机械师、技工、机修工) nor any passengers, I set myself to attempt the difficult repairs all alone. It was a question of life or death for me: I had scarcely(刚刚，勉强，几乎不) enough drinking water to last a week.
+​		The first night, then, I went to sleep on the sand, a thousand miles from any human habitation(住所、聚住地). I was more isolated(孤立的、孤独的、偏远的) than a shipwrecked(遭遇海难的) sailor(水手、海员) on a raft(筏子) in the middle of the ocean. Thus you can imagine my amazement, at sunrise, when I was awakened by an odd(奇怪的) little voice. It said: 
+​		"If you please-- draw me a sheep(羊、绵羊、胆小鬼)!"
+​		"What!"
+​		"Draw me a sheep!"
 　　I jumped to my feet(一跃而起、跳了起来), completely thunderstruck(惊愕的、吓坏了的、遭雷击的). I blinked(眨眼) my eyes hard(努力的、猛烈地). I looked carefully all around me. And I saw a most extraordinary(非凡的、特别的、离奇的) small person, who stood there examining me with great seriousness. Here you may see the best portrait(肖像、画像、人像) that, later, I was able to make of him. But my drawing is certainly very much less charming(迷人的) than its model.
 　　 That, however, is not my fault(错误). The grown-ups discouraged(阻止、劝阻、不鼓励、使气馁) me in my painter‘s career when I was six years old, and I never learned to draw anything, except boas from the outside and boas from the inside.
 　　Now I stared at this sudden apparition(幽灵、幻影、离奇出现的东西) with my eyes fairly(相当地、简直、公平地) starting out of my head in astonishment(吃惊、惊愕). Remember, I had crashed(坠毁) in the desert a thousand miles from any inhabited region. And yet(然而) my little man seemed neither to be straying(迷路) uncertainly(犹豫地、没把握地、不确定地) among the sands, nor to be fainting(虚弱的、模糊的) from fatigue(疲劳、疲乏) or hunger or thirst or fear. Nothing about him gave any suggestion(细微的迹象) of a child lost(迷路的) in the middle of the desert, a thousand miles from any human habitation. When at last I was able to speak, I said to him: "But-- what are you doing here?"
