@@ -1,19 +1,22 @@
-#include <func.h>
-//#define BUFFER_SIZE 4096
-//设计改为在函数内部发送，直接在函数内给buf分配充足，不用这玩意了
+#include "headOfServer.h"
 
-typedef struct train_s
-{
-    int trainLength;
-    char trainBody[1024];
-} train_t;
+//#include <func.h>
+////#define BUFFER_SIZE 4096
+////设计改为在函数内部发送，直接在函数内给buf分配充足，不用这玩意了
+//
+// typedef struct train_s
+//{
+//    int trainLength;
+//    char trainBody[1024];
+//} train_t;
 
 //接受客户端ls命令列出目录文件 文件名加空格
 //高哥
 
 // int dirLs(char *specific, char *buf);
 
-int dirLs(int nfd, char *specific)
+// int dirLs(int nfd, char *specific)
+int dirLs(int nfd)
 {
     //不应处理：不讲武德到参数不合法的情况(输错了输成两段等情况)暂不处理（存在将错就错的情况）
     //
@@ -40,6 +43,7 @@ int dirLs(int nfd, char *specific)
     // char buf[BUFFER_SIZE] = {0};
     //  bzero(buf, BUFFER_SIZE);
 
+    int ret;
     char buf[4096] = {0};
 
     ////此处可调用dirPwd打印当前路径
@@ -53,7 +57,11 @@ int dirLs(int nfd, char *specific)
     // }
 
     //路径不存在与打开路径失败剥离开
-    DIR *dirp = opendir(specific);
+    char curPath[1234] = {0};
+    char *pRetGetcwd = getcwd(curPath, 1234);
+    //错误处理待讨论
+
+    DIR *dirp = opendir(curPath);
     if (dirp == NULL)
     {
         // strcpy(buf, "ERROR: failed to opendir, please check your input\n");
@@ -87,9 +95,9 @@ int dirLs(int nfd, char *specific)
     // buf末尾没有换行，如有需要可添加
 
     train_t send_string = {6, "string"};
-    int ret = send(nfd, &send_string, sizeof(send_string.trainLength) + send_string.trainLength, 0);
+    // ret = send(nfd, &send_string, sizeof(send_string.trainLength) + send_string.trainLength, 0);
     //错误处理待讨论
-    int ret = send(nfd, buf, strlen(buf), 0);
+    ret = send(nfd, buf, strlen(buf), 0);
     //错误处理待讨论
 
     return 0;
