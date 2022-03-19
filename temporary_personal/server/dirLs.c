@@ -1,9 +1,13 @@
 #include <func.h>
-#define BUFFER_SIZE 4096
+//#define BUFFER_SIZE 4096
+//设计改为在函数内部发送，直接在函数内给buf分配充足，不用这玩意了
+
 //接受客户端ls命令列出目录文件 文件名加空格
 //高哥
 
-int dirLs(char *specific, char *buf)
+// int dirLs(char *specific, char *buf);
+
+int dirLs(int nfd, char *specific)
 {
     //不应处理：不讲武德到参数不合法的情况(输错了输成两段等情况)暂不处理（存在将错就错的情况）
     //
@@ -27,7 +31,10 @@ int dirLs(char *specific, char *buf)
     //      1. 路径不存在-->print error
     //      2. 输入的是文件-->则打印该文件名
 
-    bzero(buf, BUFFER_SIZE);
+    // char buf[BUFFER_SIZE] = {0};
+    //  bzero(buf, BUFFER_SIZE);
+
+    char buf[4096] = {0};
 
     ////此处可调用dirPwd打印当前路径
 
@@ -62,6 +69,7 @@ int dirLs(char *specific, char *buf)
         strcat(buf, "  "); //两个空格
     }
     //读取完毕或报错都会走到这一行
+    //错误处理待讨论
 
     //如果最后一个是空格，删掉
     int len = strlen(buf);
@@ -71,15 +79,22 @@ int dirLs(char *specific, char *buf)
         len--;
     }
     // buf末尾没有换行，如有需要可添加
-    return 0;
-}
 
-int main()
-{
-    char specific[] = ".";
-    char buf[BUFFER_SIZE] = {0};
-    int ret = dirLs(specific, buf);
-    printf("%s-end\n", buf);
+    int ret = send(nfd, buf, strlen(buf), 0);
+    //错误处理待讨论
 
     return 0;
 }
+
+// int main()
+//{
+//     char specific[] = ".";
+//     // char buf[BUFFER_SIZE] = {0};
+//     // int ret = dirLs(specific, buf);
+//     // printf("%s-end\n", buf);
+//
+//     int ret = dirLs(nfd, specific);
+//     //错误处理待讨论
+//
+//     return 0;
+// }
