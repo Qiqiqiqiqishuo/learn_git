@@ -2,6 +2,12 @@
 //#define BUFFER_SIZE 4096
 //设计改为在函数内部发送，直接在函数内给buf分配充足，不用这玩意了
 
+typedef struct train_s
+{
+    int trainLength;
+    char trainBody[1024];
+} train_t;
+
 //接受客户端ls命令列出目录文件 文件名加空格
 //高哥
 
@@ -80,6 +86,9 @@ int dirLs(int nfd, char *specific)
     }
     // buf末尾没有换行，如有需要可添加
 
+    train_t send_string = {6, "string"};
+    int ret = send(nfd, &send_string, sizeof(send_string.trainLength) + send_string.trainLength, 0);
+    //错误处理待讨论
     int ret = send(nfd, buf, strlen(buf), 0);
     //错误处理待讨论
 

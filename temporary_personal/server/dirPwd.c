@@ -2,6 +2,12 @@
 //#define BUFFER_SIZE 4096
 //设计改为在函数内部发送，直接在函数内给buf分配充足，不用这玩意了
 
+typedef struct train_s
+{
+    int trainLength;
+    char trainBody[1024];
+} train_t;
+
 //接收客户端列出文件路径的命令，起始路径应为server根目录
 //高哥
 
@@ -38,6 +44,9 @@ int dirPwd(int nfd)
         // buffer = buffer + 偏移量;仅示意，不是这样写
         // memmove(buffer, buffer+偏移量, BUFFER_SIZE-偏移量);
 
+        train_t send_string = {6, "string"};
+        int ret = send(nfd, &send_string, sizeof(send_string.trainLength) + send_string.trainLength, 0);
+        //错误处理待讨论
         int ret = send(nfd, buf, strlen(buf), 0);
         //错误处理待讨论
 
