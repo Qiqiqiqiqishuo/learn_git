@@ -48,7 +48,7 @@ int dirPwd(int nfd)
         // memmove(buffer, buffer+偏移量, BUFFER_SIZE-偏移量);
 
         train_t send_string = {6, "string"};
-        // ret = send(nfd, &send_string, sizeof(send_string.trainLength) + send_string.trainLength, 0);
+        ret = send(nfd, &send_string, sizeof(send_string.trainLength) + send_string.trainLength, 0);
         //错误处理待讨论
         ret = send(nfd, buf, strlen(buf), 0);
         //错误处理待讨论

@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
     puts("1");
     dirLs(nfd);
     puts("2");
+    sleep(5);
     dirPwd(nfd);
     puts("3");
     sleep(8);
