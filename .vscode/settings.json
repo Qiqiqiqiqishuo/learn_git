@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "taskqueue.h": "c"
+        "taskqueue.h": "c",
+        "headofserver.h": "c",
+        "syslog.h": "c"
     }
 }
