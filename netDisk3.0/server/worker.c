@@ -53,7 +53,7 @@ int handleEvent(int netFd)
     while (1)
     {
         int len = 0;
-        char command[100] = {0};
+        char command[256] = {0}; // 100->256，因密文可能就100位了
         memset(command, 0, sizeof(command));
         bzero(command, sizeof(command));
         puts(command); //会打印一个换行
@@ -66,7 +66,7 @@ int handleEvent(int netFd)
 
         printf("command : %s\n", command);
 
-        char specific[100] = {0};
+        char specific[256] = {0}; // 100->256，因密文可能就100位了，这里多放一点点
         int commandId = commandAnalysis(command, specific);
         printf("commandId=%d\n", commandId);
         puts(specific);
