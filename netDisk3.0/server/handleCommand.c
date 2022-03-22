@@ -215,8 +215,10 @@ int fileRemove(const char *specific)
     }
 }
 
+// 该函数还承担了 worker.c 中 handleEvent 栈帧中的 usrname 的修改职责，需处理
+// specific为usrname, specific -> usrname
 // void login(char *pwd, char *specific, char *usrname)
-//{
+// {
 //
 //     char temp[100] = {0};
 //     strcpy(usrname, specific);

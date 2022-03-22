@@ -106,12 +106,12 @@ int handleEvent(int netFd)
             dirPwd(netFd, pwd);
             printf("commandId=%d\n", commandId);
             break;
-        case 7:
-
+        case 7: //通过收到的用户名处理登录（查salt）/注册（随机生成salt并存数据库）行为，向客户端返回 salt
             // login(pwd, specific, usrname);
+            strcpy(usrname, specific); // commandAnalysis 函数将 specific 置为了用户名， 这里 将其拷贝给 usrname
             printf("成功commandId=%d\n", commandId);
             break;
-        case 8:
+        case 8: //比对客户端发送过来的密文，进行判断
             // regist(specific);
             break;
         default:

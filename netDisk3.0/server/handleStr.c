@@ -39,13 +39,15 @@ int commandAnalysis(char *command, char *specific)
             // }
             if (i == 7) //客户端发的是用户名
             {
-                char usrname[10] = {0};
+                // char usrname[10] = {0};
                 word = strtok(NULL, " ");
-                strcpy(usrname, word);
+                // strcpy(usrname, word);
+                // 理解失误，specific为传入传出，把usrname从command中分离出来通过specific传出去，return 7 使 handleEvent 走到分支 7 ，使用 specific 赋值给用户名
+                strcpy(specific, word);
             }
             else if (i == 8) //客户端发的是密文
             {
-                        }
+            }
             else if (!(i == 2 || i == 6))
             {
                 word = strtok(NULL, " ");

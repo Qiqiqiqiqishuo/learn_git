@@ -17,7 +17,9 @@
 //  end:    mysql_close(db);
 //  ------------------------------------------------
 
-//直接整一大坨得了，把这个函数
+int retrieve_salt_by_name(const char *usrname); // 1.1 注册过获取盐 1.2 没注册过生成盐并存数据库 2. 向客户端返回盐
+
+//这个函数设计短了，应该连上 查盐或生盐存储 向客户端返回盐的操作 不然要多次连接断连数据库 不太合适的样子
 int retrieve_user_by_name(const char *usrname);       //存在名为usrname的用户返回1，否则返回0
 
 int get_result_to_string(MYSQL *mysql, char *resBuf); //返回1结果存在并存在resBuf中，返回0结果不存在，resBuf被置位空指针

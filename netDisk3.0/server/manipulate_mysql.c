@@ -1,3 +1,4 @@
+#include "headOfServer.h"
 #include "manipulate_mysql.h"
 
 int retrieve_user_by_name(const char *usrname)
