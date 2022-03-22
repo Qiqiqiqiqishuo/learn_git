@@ -2,7 +2,7 @@ SRCS:=$(wildcard *.c)
 OBJS:=$(SRCS:%.c=%.o)
 CC:=gcc
 server:$(OBJS)
-	$(CC) $^ -o $@ -lpthread -lcrypt 
+	$(CC) $^ -o $@ -lpthread -lcrypt -lmysqlclient
 %.o:%.c
 	$(CC) -c $^ -o $@ -g 
 .PHONY:clean rebuild
