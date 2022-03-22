@@ -47,6 +47,8 @@ int commandAnalysis(char *command, char *specific)
             }
             else if (i == 8) //客户端发的是密文
             {
+                word = strtok(NULL, " ");
+                strcpy(specific, word);
             }
             else if (!(i == 2 || i == 6))
             {

@@ -18,8 +18,9 @@
 //  end:    mysql_close(db);
 //  ------------------------------------------------
 
-int salt_generator(char *salt);                 //为0成功，没想到怎么失败，salt分配了123字节的栈空间在retrieve_salt_by_name中
-int retrieve_salt_by_name(const char *usrname); // 1.1 注册过获取盐 1.2 没注册过生成盐并存数据库 2. 向客户端返回盐
+int retrieve_check_ciphertext_by_name(const char *usrname, const char *ciphertext, int nfd); // 1为注册过 2为注册 1.1 对比密文，返回msg成功或失败 2.1存储密文，返回msg登陆成功
+int salt_generator(char *salt);                                                              //为0成功，没想到怎么失败，salt分配了123字节的栈空间在retrieve_salt_by_name中
+int retrieve_send_salt_by_name(const char *usrname, int nfd);                                // 1.1 注册过获取盐 1.2 没注册过生成盐并存数据库 2. 向客户端返回盐
 
 //这个函数设计短了，应该连上 查盐或生盐存储 向客户端返回盐的操作 不然要多次连接断连数据库 不太合适的样子
 int retrieve_user_by_name(const char *usrname); //存在名为usrname的用户返回1，否则返回0

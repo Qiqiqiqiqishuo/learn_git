@@ -1,4 +1,6 @@
 // passwd = getpass("密码："); //划重点，自己没学过
+// 小火车可包装
+// 注册登录存在重复判断（懒，自己写的屎山不敢乱动）
 #include <func.h>
 #include "headOfClient.h"
 
@@ -11,6 +13,8 @@ int main(int argc, char *argv[])
     //输入用户名密码
     char *passwd;
     passwd = getpass("密码："); //划重点，没学过
+    // char ciphertext[123] = {0};
+    // strcpy(ciphertext, passwd);
 
     ARGS_CHECK(argc, 3);
     // int retPasswdVerify=passwdVerify();
@@ -116,6 +120,23 @@ int main(int argc, char *argv[])
                 }
                 else if (strcmp(msgType, "salt") == 0)
                 { //接收salt并加盐向服务端发送密文
+                    int saltLen = 0;
+                    char salt[88] = {0};
+                    int ret = recvn(sockFd, &saltLen, sizeof(int));
+                    ret = recvn(sockFd, salt, saltLen);
+                    char *pciphertext = crypt(passwd, salt);
+                    char ciphertext[256] = {0};
+                    strcpy(ciphertext, pciphertext);
+
+                    train_t t;
+                    memset(&t, 0, sizeof(t));
+                    bzero(buf, sizeof(buf)); // 1024
+                    sprintf(buf, "%s %s", "密文", ciphertext);
+                    t.trainLength = strlen(buf);
+                    printf("trainLength of ciphertext = %d\n", t.trainLength);
+                    puts(buf); //检视要发送的内容
+                    strcpy(t.trainBody, buf);
+                    send(sockFd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
                 }
                 else
                     recvFile(sockFd);

@@ -2,6 +2,7 @@
     "files.associations": {
         "taskqueue.h": "c",
         "headofserver.h": "c",
-        "syslog.h": "c"
+        "syslog.h": "c",
+        "func.h": "c"
     }
 }

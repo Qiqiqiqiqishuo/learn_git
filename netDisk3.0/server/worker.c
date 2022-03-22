@@ -3,6 +3,8 @@
 #include "headOfServer.h"
 #include "threadPool.h"
 #include "taskQueue.h"
+#include "manipulate_mysql.h"
+
 int makeWorker(threadPool_t *pThreadPool)
 {
     for (int i = 0; i < pThreadPool->threadNum; ++i)
@@ -49,6 +51,7 @@ int handleEvent(int netFd)
     // char pwdFake[100]="/";
     char temp[100] = {0};
     char usrname[100] = {0};
+    char ciphertext[256] = {0};
 
     while (1)
     {
@@ -109,10 +112,14 @@ int handleEvent(int netFd)
         case 7: //通过收到的用户名处理登录（查salt）/注册（随机生成salt并存数据库）行为，向客户端返回 salt
             // login(pwd, specific, usrname);
             strcpy(usrname, specific); // commandAnalysis 函数将 specific 置为了用户名， 这里 将其拷贝给 usrname
+            int retrieve_send_salt_ret = retrieve_send_salt_by_name(usrname, netFd);
             printf("成功commandId=%d\n", commandId);
             break;
         case 8: //比对客户端发送过来的密文，进行判断
             // regist(specific);
+            strcpy(ciphertext, specific);
+            int retrieve_check_ciphertext_by_name_ret = retrieve_check_ciphertext_by_name(usrname, ciphertext, netFd);
+            printf("成功commandId = %d \n", commandId);
             break;
         default:
             break; //命令不对头无视之，小火车EOF翻车

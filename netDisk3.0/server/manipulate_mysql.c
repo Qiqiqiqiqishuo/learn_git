@@ -1,7 +1,87 @@
 #include "headOfServer.h"
 #include "manipulate_mysql.h"
 
-int retrieve_salt_by_name(const char *usrname)
+int retrieve_check_ciphertext_by_name(const char *usrname, const char *ciphertext, int nfd)
+{
+    int ret;
+    char sql[BUFFER_SIZE] = {0};
+    char resBuf[BUFFER_SIZE] = {0};
+    char stored_ciphertext[BUFFER_SIZE] = {0};
+    char msgBuf[BUFFER_SIZE] = {0};
+
+    MYSQL *db = mysql_init(NULL);
+    ret = connect_db(db, "localhost", "root", "024680", "nddb", 0, NULL, 0);
+
+    sprintf(sql, "select name from user where name = '%s'", usrname);
+    ret = execute_sql(db, sql);
+    int registered = get_result_to_string(db, resBuf);
+
+    if (registered)
+    { //对比密文，向客户端返回成功或失败
+        sprintf(sql, "select ciphertext from user where name = '%s'", usrname);
+        ret = execute_sql(db, sql);
+        int suc_get_stored_ciphertext = get_result_to_string(db, stored_ciphertext);
+        if (strcmp(ciphertext, stored_ciphertext) == 0)
+        { //成功
+            train_t t = {6, "string"};
+            send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
+
+            printf("trainLength of type = %d\n", t.trainLength);
+
+            bzero(&t, sizeof(t));
+
+            strcpy(msgBuf, "登录成功");
+            t.trainLength = strlen(msgBuf);
+            printf("trainLength of msgBuf = %d\n", t.trainLength);
+            printf("msgBuf = %s\n", msgBuf);
+            strcpy(t.trainBody, msgBuf);
+            send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
+        }
+        else
+        { //密码错误，失败
+            train_t t = {6, "string"};
+            send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
+
+            printf("trainLength of type = %d\n", t.trainLength);
+
+            bzero(&t, sizeof(t));
+
+            strcpy(msgBuf, "登录失败");
+            t.trainLength = strlen(msgBuf);
+            printf("trainLength of msgBuf = %d\n", t.trainLength);
+            printf("msgBuf = %s\n", msgBuf);
+            strcpy(t.trainBody, msgBuf);
+            send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
+
+            mysql_close(db);
+            return -1;
+        }
+    }
+    else
+    { //存储密文，向客户端返回成功
+        sprintf(sql, "update user set ciphertext = '%s' where name = '%s'", ciphertext, usrname);
+        ret = execute_sql(db, sql);
+
+        train_t t = {6, "string"};
+        send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
+
+        printf("trainLength of type = %d\n", t.trainLength);
+
+        bzero(&t, sizeof(t));
+
+        strcpy(msgBuf, "登录成功");
+        t.trainLength = strlen(msgBuf);
+        printf("trainLength of msgBuf = %d\n", t.trainLength);
+        printf("msgBuf = %s\n", msgBuf);
+        strcpy(t.trainBody, msgBuf);
+        send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
+    }
+
+    mysql_close(db);
+
+    return 0;
+}
+int retrieve_send_salt_by_name(const char *usrname, int nfd)
 {
     int ret;
     char sql[BUFFER_SIZE] = {0};
@@ -32,6 +112,17 @@ int retrieve_salt_by_name(const char *usrname)
     }
 
     //发盐
+    train_t t = {4, "salt"};
+    send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
+
+    printf("trainLength of type = %d\n", t.trainLength);
+
+    bzero(&t, sizeof(t));
+    t.trainLength = strlen(salt);
+    printf("trainLength of salt = %d\n", t.trainLength);
+    printf("salt = %s\n", salt);
+    strcpy(t.trainBody, salt);
+    send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
 
     mysql_close(db);
 
