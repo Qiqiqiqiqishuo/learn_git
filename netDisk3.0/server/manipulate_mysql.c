@@ -10,30 +10,43 @@ int execute_sql(MYSQL *mysql, const char *sql)
         return -1;
     }
     printf("suc exec \"%s\"\n", sql);
+
+    return 0;
 }
 
 char *get_result_to_string(MYSQL *mysql, char *resBuf)
 {
     MYSQL_RES *result = mysql_store_result(mysql);
-    if (result == NULL)
+
+    // if (result == NULL)
+    //{
+    //     resBuf = NULL;
+    //     return NULL;
+    // }
+    //不好使，An empty result set is returned if there are no rows returned. (An empty result set differs from a null
+    // pointer as a return value.)
+    //寄
+    //改用unsigned long long int rows = mysql_num_rows(MYSQL_RES *result);
+
+    unsigned long long int rows = mysql_num_rows(result);
+    printf("the row number = %llu\n", rows); //其实只取一个字段，这里方便检错
+
+    if (rows != 0)
+    {
+        MYSQL_ROW row = mysql_fetch_row(result);
+        sprintf(resBuf, "%s\t", row[0]);
+        printf("resBuf = %s\n", resBuf);
+    }
+    else
     {
         resBuf = NULL;
-        return NULL;
+        printf("resBuf = void string\n");
     }
 
-    printf("the row number = %lld\n", mysql_num_rows(result)); //其实只取一个字段，这里方便检错
-
-    MYSQL_ROW row;
-    while ((row = mysql_fetch_row(result)))
-    {
-        for (int i = 0; (unsigned int)i < mysql_num_fields(result); i++)
-        {
-            printf("%s\t", row[i]);
-        }
-        printf("\n");
-    }
+    printf("suc fetch result to buffer\n");
     mysql_free_result(result);
-    printf("suc fetch all result\n");
+
+    return resBuf;
 }
 
 int execute_sql_output(MYSQL *mysql, const char *sql)
