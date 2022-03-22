@@ -1,3 +1,4 @@
+// salt_generator 也放在这里了
 #include <func.h>
 
 //  ----------初始化MYSQL对象，连接数据库----------
@@ -17,10 +18,11 @@
 //  end:    mysql_close(db);
 //  ------------------------------------------------
 
+int salt_generator(char *salt);                 //为0成功，没想到怎么失败，salt分配了123字节的栈空间在retrieve_salt_by_name中
 int retrieve_salt_by_name(const char *usrname); // 1.1 注册过获取盐 1.2 没注册过生成盐并存数据库 2. 向客户端返回盐
 
 //这个函数设计短了，应该连上 查盐或生盐存储 向客户端返回盐的操作 不然要多次连接断连数据库 不太合适的样子
-int retrieve_user_by_name(const char *usrname);       //存在名为usrname的用户返回1，否则返回0
+int retrieve_user_by_name(const char *usrname); //存在名为usrname的用户返回1，否则返回0
 
 int get_result_to_string(MYSQL *mysql, char *resBuf); //返回1结果存在并存在resBuf中，返回0结果不存在，resBuf被置位空指针
 // char *get_result_to_string(MYSQL *mysql, char *result);                                                                                                                      //设计为只读取只有一个字段的结果，将结果保存到result字符串，返回指向result第一个字节的char*指针

@@ -1,6 +1,70 @@
 #include "headOfServer.h"
 #include "manipulate_mysql.h"
 
+int retrieve_salt_by_name(const char *usrname)
+{
+    int ret;
+    char sql[BUFFER_SIZE] = {0};
+    char resBuf[BUFFER_SIZE] = {0};
+    char salt[123] = {0};
+
+    MYSQL *db = mysql_init(NULL);
+    ret = connect_db(db, "localhost", "root", "024680", "nddb", 0, NULL, 0);
+
+    sprintf(sql, "select name from user where name = '%s'", usrname);
+    ret = execute_sql(db, sql);
+    int registered = get_result_to_string(db, resBuf);
+
+    if (registered)
+    { //取盐
+        sprintf(sql, "select salt from user where name = '%s'", usrname);
+        ret = execute_sql(db, sql);
+        int suc_get_salt = get_result_to_string(db, salt); // 1成功，0失败
+        printf("salt = %s\n", salt);
+    }
+    else
+    { //生盐并创建用户存盐
+        int salt_gen_ret = salt_generator(salt);
+
+        sprintf(sql, "insert into user (name, salt) values('%s', '%s')", usrname, salt);
+        ret = execute_sql(db, sql);
+        printf("salt = %s\n", salt);
+    }
+
+    //发盐
+
+    mysql_close(db);
+
+    return 0;
+}
+
+int salt_generator(char *salt)
+{
+    int flag, i;
+    srand((unsigned)time(NULL));
+    for (i = 0; i < 9; i++)
+    {
+        flag = rand() % 3;
+        switch (flag)
+        {
+        case 0:
+            salt[i] = 'A' + rand() % 26;
+            break;
+        case 1:
+            salt[i] = 'a' + rand() % 26;
+            break;
+        case 2:
+            salt[i] = '0' + rand() % 10;
+            break;
+        default:
+            salt[i] = 'x';
+            break;
+        }
+    }
+    salt[i] = 0;
+    return 0;
+}
+
 int retrieve_user_by_name(const char *usrname)
 {
     int ret;

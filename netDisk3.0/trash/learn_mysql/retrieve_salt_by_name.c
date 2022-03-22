@@ -1,5 +1,6 @@
 #include <func.h>
 
+int salt_generator(char *salt);
 int retrieve_salt_by_name(const char *usrname);
 int retrieve_user_by_name(const char *usrname);
 int execute_sql(MYSQL *mysql, const char *sql);
@@ -9,14 +10,19 @@ int get_result_to_string(MYSQL *mysql, char *resBuf);
 int main(int argc,char*argv[])
 {   // $ ./retrieve_user_by_name name
     ARGS_CHECK(argc, 2);
-    if (retrieve_user_by_name(argv[1]))
-    {
-        printf("user %s exist\n", argv[1]);
-    }
-    else
-    {
-        printf("user %s don't exist\n", argv[1]);
-    }
+
+    int ret = retrieve_salt_by_name(argv[1]);
+    
+    //test for retrieve_user_by_name
+    //if (retrieve_user_by_name(argv[1]))
+    //{
+    //    printf("user %s exist\n", argv[1]);
+    //}
+    //else
+    //{
+    //    printf("user %s don't exist\n", argv[1]);
+    //}
+    
     return 0;
 }
 
@@ -124,7 +130,6 @@ int retrieve_salt_by_name(const char *usrname)
     ret = execute_sql(db, sql);
     int registered = get_result_to_string(db, resBuf);
  
-    mysql_close(db);
 
     if (registered)
     {   //取盐
@@ -136,9 +141,44 @@ int retrieve_salt_by_name(const char *usrname)
     }
     else 
     {   //生盐并创建用户存盐
+        int salt_gen_ret = salt_generator(salt);
 
+        sprintf(sql, "insert into user (name, salt) values('%s', '%s')", usrname, salt);
+        ret = execute_sql(db, sql);
+        printf("salt = %s\n", salt);
     }
 
     //发盐
     
+    
+    mysql_close(db);
+
+    return 0;
+}
+
+int salt_generator(char *salt)
+{
+    int flag, i;
+    srand((unsigned) time(NULL));
+    for (i=0; i<9; i++)
+    {
+        flag = rand() % 3;
+        switch (flag)
+        {
+        case 0:
+            salt[i] = 'A' + rand()%26;
+            break;
+        case 1:
+            salt[i] = 'a' + rand()%26;
+            break;
+        case 2:
+            salt[i] = '0' + rand()%10;
+            break;
+        default:
+            salt[i] = 'x';
+            break;
+        }
+    }
+    salt[i] = 0;
+    return 0;
 }
