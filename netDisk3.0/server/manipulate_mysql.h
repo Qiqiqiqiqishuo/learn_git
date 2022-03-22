@@ -17,7 +17,11 @@
 //  end:    mysql_close(db);
 //  ------------------------------------------------
 
-char *get_result_to_string(MYSQL *mysql, char *result);                                                                                                                      //设计为只读取只有一个字段的结果，将结果保存到result字符串，返回指向result第一个字节的char*指针
+//直接整一大坨得了，把这个函数
+int retrieve_user_by_name(const char *usrname);       //存在名为usrname的用户返回1，否则返回0
+
+int get_result_to_string(MYSQL *mysql, char *resBuf); //返回1结果存在并存在resBuf中，返回0结果不存在，resBuf被置位空指针
+// char *get_result_to_string(MYSQL *mysql, char *result);                                                                                                                      //设计为只读取只有一个字段的结果，将结果保存到result字符串，返回指向result第一个字节的char*指针
 int execute_sql(MYSQL *mysql, const char *sql);                                                                                                                              //执行sql语句
 int execute_sql_output(MYSQL *mysql, const char *sql);                                                                                                                       //暂时搁置，耦合且可能不通用，见上大块注释
 int connect_db(MYSQL *mysql, const char *host, const char *user, const char *passwd, const char *db, unsigned int port, const char *unix_socket, unsigned long client_flag); //连接数据库（此前要先初始化一个MYSQL对象）
