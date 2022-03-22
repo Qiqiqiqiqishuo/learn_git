@@ -215,15 +215,15 @@ int fileRemove(const char *specific)
     }
 }
 
-void login(char *pwd, char *specific, char *usrname)
-{
-
-    char temp[100] = {0};
-    strcpy(usrname, specific);
-    strcpy(temp, pwd);
-    sprintf(pwd, "/%s", specific);
-    mkdir(specific, 0777); //不存在创建，存在就当无事发生过
-    // chdir(pwd);
-    puts(pwd);
-    return;
-}
+// void login(char *pwd, char *specific, char *usrname)
+//{
+//
+//     char temp[100] = {0};
+//     strcpy(usrname, specific);
+//     strcpy(temp, pwd);
+//     sprintf(pwd, "/%s", specific);
+//     mkdir(specific, 0777); //不存在创建，存在就当无事发生过
+//     // chdir(pwd);
+//     puts(pwd);
+//     return;
+// }

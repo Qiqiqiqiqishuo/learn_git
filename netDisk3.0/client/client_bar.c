@@ -1,3 +1,4 @@
+// passwd = getpass("密码："); //划重点，自己没学过
 #include <func.h>
 #include "headOfClient.h"
 
@@ -9,7 +10,7 @@ int main(int argc, char *argv[])
     scanf("%s", usrname);
     //输入用户名密码
     char *passwd;
-    passwd = getpass("密码：");
+    passwd = getpass("密码："); //划重点，没学过
 
     ARGS_CHECK(argc, 3);
     // int retPasswdVerify=passwdVerify();
@@ -49,6 +50,7 @@ int main(int argc, char *argv[])
     //    send(sockFd,&t,sizeof(t.trainLength)+ t.trainLength,MSG_NOSIGNAL);
     //
 
+    //  登陆完成前乱瞎搞（乱输东西）可能会导致意想不到的后果！！！
     //实现客户“无感注册登录”，“提高用户体验”(减少登录失败的概率，输错用户名就自动创建新账号)的同时获取更多注册客户数量
     //客户端无论是登录还是注册操作逻辑完全相同
     //
@@ -62,6 +64,18 @@ int main(int argc, char *argv[])
     //  2. 输入密码
     //
     //  从而提高用户注册数量(除正确输入已注册用户名外每次都会注册一个用户)
+    //  登陆完成前乱瞎搞（乱输东西）可能会导致意想不到的后果！！！
+
+    //发送用户名
+    train_t t;
+    memset(&t, 0, sizeof(t));
+    bzero(buf, sizeof(buf)); // 1024
+    sprintf(buf, "%s %s", "用户名", usrname);
+    t.trainLength = strlen(buf);
+    printf("%d\n", t.trainLength);
+    puts(buf); //检视要发送的内容
+    strcpy(t.trainBody, buf);
+    send(sockFd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
 
     while (1)
     {
@@ -99,6 +113,9 @@ int main(int argc, char *argv[])
                 {
 
                     printRes(sockFd);
+                }
+                else if (strcmp(msgType, "salt") == 0)
+                { //接收salt并加盐向服务端发送密文
                 }
                 else
                     recvFile(sockFd);

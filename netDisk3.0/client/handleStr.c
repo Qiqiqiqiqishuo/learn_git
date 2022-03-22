@@ -11,13 +11,14 @@ void printRes(int sockFd){
     return;
 }
 
+//EOF问题可能需要在这附近解决
 void getMsgType(int sockFd,char *new_msgType){
     int dataLength=0;
     char msgType[1024] = {0};
-    int ret =recvn(sockFd,&dataLength,sizeof(int));
+    int ret =recvn(sockFd,&dataLength,sizeof(int));//读取sizeof(int)个字节（火车头），获取火车货箱长度
     //ERROR_CHECK(ret,-1,"recv");
     //printf("%d\n",dataLength);
-    ret = recvn(sockFd,msgType, dataLength);
+    ret = recvn(sockFd,msgType, dataLength);//读货(类型)
     strcpy(new_msgType,msgType);
     //ERROR_CHECK(ret,-1,"recv");
     return ;

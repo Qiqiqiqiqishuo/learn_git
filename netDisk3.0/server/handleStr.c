@@ -37,12 +37,15 @@ int commandAnalysis(char *command, char *specific)
             //     else
             //         return -1;
             // }
-            if (i == 7) //发的是用户名
+            if (i == 7) //客户端发的是用户名
             {
+                char usrname[10] = {0};
+                word = strtok(NULL, " ");
+                strcpy(usrname, word);
             }
-            else if (i == 8) //发的是密文
+            else if (i == 8) //客户端发的是密文
             {
-            }
+                        }
             else if (!(i == 2 || i == 6))
             {
                 word = strtok(NULL, " ");

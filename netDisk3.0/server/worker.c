@@ -108,7 +108,7 @@ int handleEvent(int netFd)
             break;
         case 7:
 
-            login(pwd, specific, usrname);
+            // login(pwd, specific, usrname);
             printf("成功commandId=%d\n", commandId);
             break;
         case 8:
