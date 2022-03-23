@@ -1,5 +1,50 @@
 #include "headOfServer.h"
 #include "manipulate_mysql.h"
+int ls_vfs(const char *usrname, const char *pwd, int nfd)
+{
+    int ret;
+    char sql[BUFFER_SIZE] = {0};
+    char msgBuf[BUFFER_SIZE] = {0};
+    char curAbsPath[BUFFER_SIZE] = {0};
+    char pwd_id[BUFFER_SIZE] = {0};
+
+    getcwd(curAbsPath, 4096);
+    strcat(curAbsPath, pwd);
+    puts(curAbsPath); //仅用于服务端提示
+
+    MYSQL *db = mysql_init(NULL);
+    ret = connect_db(db, "localhost", "root", "024680", "nddb", 0, NULL, 0);
+
+    sprintf(sql, "select id from vft where filename = '%s' and (user = '%s' or user = 'root')", pwd, usrname);
+    ret = execute_sql(db, sql);
+    get_result_to_string(db, pwd_id); //返回1则sql结果非NULL，返回0为NULL，这里不做检查了
+
+    bzero(sql, BUFFER_SIZE);
+    sprintf(sql, "select filename from vft where pre_id = '%d'", atoi(pwd_id));
+    ret = execute_sql(db, sql);
+
+    bzero(msgBuf, BUFFER_SIZE);
+    ret = get_all_result_to_string_separate_by_two_space(db, msgBuf);
+    if (ret != 0)
+    {
+        //寄
+        return -1;
+    }
+    else
+    {
+        train_t t = {6, "string"};
+        send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
+        printf("t.trainLength = %d\n", t.trainLength);
+
+        bzero(&t, sizeof(t));
+        t.trainLength = strlen(msgBuf);
+        printf("%d\n", t.trainLength);
+        puts(msgBuf);
+        strcpy(t.trainBody, msgBuf);
+        send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
+    }
+    return 0;
+}
 
 int retrieve_check_ciphertext_by_name(const char *usrname, const char *ciphertext, int nfd)
 {
@@ -199,6 +244,43 @@ int execute_sql(MYSQL *mysql, const char *sql)
         return -1;
     }
     printf("suc exec \"%s\"\n", sql);
+
+    return 0;
+}
+
+int get_all_result_to_string_separate_by_two_space(MYSQL *mysql, char *resBuf)
+{
+    MYSQL_RES *result = mysql_store_result(mysql);
+    if (result == NULL)
+    {
+        printf("Error: %s\n", mysql_error(mysql));
+        return -1;
+    }
+    printf("the row number = %lld\n", mysql_num_rows(result));
+
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(result)))
+    {
+        for (int i = 0; (unsigned int)i < mysql_num_fields(result); i++)
+        {
+            printf("%s\t", row[i]);
+            strcat(resBuf, row[i]);
+            strcat(resBuf, "  ");
+        }
+        printf("\n");
+    }
+    mysql_free_result(result);
+    int len = strlen(resBuf);
+    if (len == 0)
+    {
+        printf("empty dir, operation error\n");
+        return -1;
+    }
+    while (resBuf[len - 1] == ' ')
+    {
+        resBuf[len - 1] = 0;
+        len--;
+    }
 
     return 0;
 }

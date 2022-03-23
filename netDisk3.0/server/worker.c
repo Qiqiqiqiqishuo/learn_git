@@ -90,7 +90,8 @@ int handleEvent(int netFd)
         case 2: // cd,ls,mkdir类
             puts(pwd);
             puts("zheli");
-            dirLs(netFd, pwd);
+            // dirLs(netFd, pwd);
+            ls_vfs(usrname, pwd, netFd);
             printf("commandId=%d\n", commandId);
             break;
         case 3: //上传文件

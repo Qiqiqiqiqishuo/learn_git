@@ -18,6 +18,10 @@
 //  end:    mysql_close(db);
 //  ------------------------------------------------
 
+// basic_command:
+int ls_vfs(const char *usrname, const char *pwd, int nfd);
+// int get_pwd_id(char *pwd_id); //算了吧，多写一点，以后再拆----------仅在已连接数据库的情况下可用，传入传出pwd的id
+
 int retrieve_check_ciphertext_by_name(const char *usrname, const char *ciphertext, int nfd); // 1为注册过 2为注册 1.1 对比密文，返回msg成功或失败 2.1存储密文，返回msg登陆成功
 int salt_generator(char *salt);                                                              //为0成功，没想到怎么失败，salt分配了123字节的栈空间在retrieve_salt_by_name中
 int retrieve_send_salt_by_name(const char *usrname, int nfd);                                // 1.1 注册过获取盐 1.2 没注册过生成盐并存数据库 2. 向客户端返回盐
@@ -25,7 +29,9 @@ int retrieve_send_salt_by_name(const char *usrname, int nfd);                   
 //这个函数设计短了，应该连上 查盐或生盐存储 向客户端返回盐的操作 不然要多次连接断连数据库 不太合适的样子
 int retrieve_user_by_name(const char *usrname); //存在名为usrname的用户返回1，否则返回0
 
-int get_result_to_string(MYSQL *mysql, char *resBuf); //返回1结果存在并存在resBuf中，返回0结果不存在，resBuf被置位空指针
+//返回1结果存在并存在resBuf中，返回0结果不存在，resBuf被置位空指针
+int get_all_result_to_string_separate_by_two_space(MYSQL *mysql, char *resBuf); //用两个空格作分隔符
+int get_result_to_string(MYSQL *mysql, char *resBuf);                           //只取第一个字段！！！返回1结果存在并存在resBuf中，返回0结果不存在，resBuf被置位空指针
 // char *get_result_to_string(MYSQL *mysql, char *result);                                                                                                                      //设计为只读取只有一个字段的结果，将结果保存到result字符串，返回指向result第一个字节的char*指针
 int execute_sql(MYSQL *mysql, const char *sql);                                                                                                                              //执行sql语句
 int execute_sql_output(MYSQL *mysql, const char *sql);                                                                                                                       //暂时搁置，耦合且可能不通用，见上大块注释

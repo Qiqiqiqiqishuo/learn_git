@@ -3,6 +3,7 @@
         "taskqueue.h": "c",
         "headofserver.h": "c",
         "syslog.h": "c",
-        "func.h": "c"
+        "func.h": "c",
+        "manipulate_mysql.h": "c"
     }
 }

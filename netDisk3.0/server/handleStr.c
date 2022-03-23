@@ -2,8 +2,12 @@
 int commandAnalysis(char *command, char *specific)
 {
     if (strlen(command) == 0)
+    {
         return -1;
+    }
+
     // char *commandmap[] = {"cd", "mkdir", "ls", "upload", "download", "rm", "pwd", "登录", "注册"};
+
     char *commandmap[] = {"cd", "mkdir", "ls", "upload", "download", "rm", "pwd", "用户名", "密文"};
     char *word = strtok(command, " ");
     char newCommand[10] = {0};

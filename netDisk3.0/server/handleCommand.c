@@ -68,7 +68,7 @@ int dirLs(int nfd, char *pwd)
     char buf[4096] = {0};
     char curPath[1234] = {0};
     getcwd(curPath, 1234);
-    strcat(curPath, pwd); //没看懂，但并不影响结果
+    strcat(curPath, pwd); //这里pwd为 "根目录/" 之后的内容
     puts(curPath);
     DIR *dirp = opendir(curPath);
     if (dirp == NULL)

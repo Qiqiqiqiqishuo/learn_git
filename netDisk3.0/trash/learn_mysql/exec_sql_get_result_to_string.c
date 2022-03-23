@@ -26,7 +26,7 @@ int main(int argc,char*argv[])
     //printf("%s\n", resBuf);
 
     bzero(resBuf, BUFFER_SIZE);
-    strcpy(sql, "select name from user where id = 2");
+    strcpy(sql, "select name from user where id = 88");
     ret = execute_sql(db, sql);
 
     get_result_to_string(db, resBuf);
