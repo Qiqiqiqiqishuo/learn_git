@@ -19,8 +19,11 @@
 //  ------------------------------------------------
 
 // basic_command:
-int ls_vfs(const char *usrname, const char *pwd, int nfd);
-// int get_pwd_id(char *pwd_id); //算了吧，多写一点，以后再拆----------仅在已连接数据库的情况下可用，传入传出pwd的id
+int mkdir_vfs(const char *usrname, const int pwd_id, const char *specific);
+//改不如重写，写！------------暂时放弃重构该处
+int ls_vfs(const char *usrname, const int pwd_id, const int nfd); //重写！----暂时放弃重构该处
+// int ls_vfs_by_usrname_pwd_nfd(const char *usrname, const char *pwd, int nfd); //当我没说，重构的事情以后再说吧----设计蠢了，弃用
+//   int get_pwd_id(char *pwd_id); //算了吧，多写一点，以后再拆----------仅在已连接数据库的情况下可用，传入传出pwd的id
 
 int retrieve_check_ciphertext_by_name(const char *usrname, const char *ciphertext, int nfd); // 1为注册过 2为注册 1.1 对比密文，返回msg成功或失败 2.1存储密文，返回msg登陆成功
 int salt_generator(char *salt);                                                              //为0成功，没想到怎么失败，salt分配了123字节的栈空间在retrieve_salt_by_name中

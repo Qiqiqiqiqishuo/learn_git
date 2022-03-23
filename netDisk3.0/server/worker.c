@@ -47,7 +47,9 @@ void *threadFunc(void *parg)
 int handleEvent(int netFd)
 {
     // char pwd[100]="/home/mliuxb/netDisk/threadPool/usr";
+    const int home_id = 4;
     char pwd[100] = "/"; // pwd除为根目录的情况下一般不以'/'结尾
+    int pwd_id = 4;
     // char pwdFake[100]="/";
     char temp[100] = {0};
     char usrname[100] = {0};
@@ -84,14 +86,17 @@ int handleEvent(int netFd)
             bzero(temp, sizeof(temp));
             sprintf(temp, "%s/%s", pwd, specific);
             // puts(temp);
-            dirMake(temp);
+            // dirMake(temp);
+            mkdir_vfs(usrname, pwd_id, specific);
             printf("commandId=%d\n", commandId);
             break;
         case 2: // cd,ls,mkdir类
             puts(pwd);
+            printf("pwd_id = %d\n", pwd_id);
             puts("zheli");
             // dirLs(netFd, pwd);
-            ls_vfs(usrname, pwd, netFd);
+            // ls_vfs_by_usrname_pwd_nfd(usrname, pwd, netFd);
+            ls_vfs(usrname, pwd_id, netFd);
             printf("commandId=%d\n", commandId);
             break;
         case 3: //上传文件

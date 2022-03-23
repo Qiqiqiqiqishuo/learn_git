@@ -1,6 +1,63 @@
 #include "headOfServer.h"
 #include "manipulate_mysql.h"
-int ls_vfs(const char *usrname, const char *pwd, int nfd)
+
+int mkdir_vfs(const char *usrname, const int pwd_id, const char *specific)
+{
+    int ret;
+    char sql[BUFFER_SIZE] = {0};
+
+    MYSQL *db = mysql_init(NULL);
+    ret = connect_db(db, "localhost", "root", "024680", "nddb", 0, NULL, 0);
+
+    sprintf(sql, "insert into vft values(default, '%s', %d, 'd', '%s', default, default, default)", specific, pwd_id, usrname);
+    ret = execute_sql(db, sql);
+    if (ret == 0)
+    {
+        printf("succeed mkdir %s\n", specific);
+        return 0;
+    }
+    else
+    {
+        printf("failed mkdir %s\n", specific);
+        return -1;
+    }
+}
+
+int ls_vfs(const char *usrname, const int pwd_id, const int nfd)
+{
+    int ret;
+    char sql[BUFFER_SIZE] = {0};
+    char msgBuf[BUFFER_SIZE] = {0};
+
+    MYSQL *db = mysql_init(NULL);
+    ret = connect_db(db, "localhost", "root", "024680", "nddb", 0, NULL, 0); //内已含报错，暂不处理错误
+
+    sprintf(sql, "select filename from vft where pre_id = %d and user = '%s'", pwd_id, usrname);
+    ret = execute_sql(db, sql);
+    ret = get_all_result_to_string_separate_by_two_space(db, msgBuf);
+    if (ret != 0)
+    {
+        //寄了
+        return -1;
+    }
+    else
+    {
+        train_t t = {6, "string"};
+        send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
+        printf("t.trainLength = %d\n", t.trainLength);
+
+        bzero(&t, sizeof(t));
+        t.trainLength = strlen(msgBuf);
+        printf("t.trainLength = %d\n", t.trainLength);
+        puts(msgBuf);
+        strcpy(t.trainBody, msgBuf);
+        send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
+    }
+    return 0;
+}
+
+//发现bug，重写一遍应该比改这堆屎快很多，必须重写了---------重构的事情以后再说吧------弃用之，用上面这个，见头文件说明
+int ls_vfs_by_usrname_pwd_nfd(const char *usrname, const char *pwd, int nfd)
 {
     int ret;
     char sql[BUFFER_SIZE] = {0};
@@ -121,7 +178,7 @@ int retrieve_check_ciphertext_by_name(const char *usrname, const char *ciphertex
 
         bzero(&t, sizeof(t));
 
-        strcpy(msgBuf, "登录成功");
+        strcpy(msgBuf, "注册并登录成功");
         t.trainLength = strlen(msgBuf);
         printf("trainLength of msgBuf = %d\n", t.trainLength);
         printf("msgBuf = %s\n", msgBuf);
