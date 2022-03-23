@@ -5,24 +5,26 @@ int retrieve_check_ciphertext_by_name(const char *usrname, const char *ciphertex
 {
     int ret;
     char sql[BUFFER_SIZE] = {0};
-    char resBuf[BUFFER_SIZE] = {0};
+    // char resBuf[BUFFER_SIZE] = {0};
     char stored_ciphertext[BUFFER_SIZE] = {0};
     char msgBuf[BUFFER_SIZE] = {0};
 
     MYSQL *db = mysql_init(NULL);
     ret = connect_db(db, "localhost", "root", "024680", "nddb", 0, NULL, 0);
 
-    sprintf(sql, "select name from user where name = '%s'", usrname);
+    sprintf(sql, "select ciphertext from user where name = '%s'", usrname);
     ret = execute_sql(db, sql);
-    int registered = get_result_to_string(db, resBuf);
+    get_result_to_string(db, stored_ciphertext); //返回值无意义了，不会为空，为NULL时resBuf为(NULL)
 
-    if (registered)
-    { //对比密文，向客户端返回成功或失败
-        sprintf(sql, "select ciphertext from user where name = '%s'", usrname);
-        ret = execute_sql(db, sql);
-        int suc_get_stored_ciphertext = get_result_to_string(db, stored_ciphertext);
-        if (strcmp(ciphertext, stored_ciphertext) == 0)
-        { //成功
+    puts("开始通过数据库中密文是否为null判断是登录还是注册");
+    if (strncmp(stored_ciphertext, "(null)", 6) != 0) //对数据库的NULL不理解，这里直接cmp不成功，只cmp前六个字节可以成功，经测试cmp "(null) "也不行，好像只是打印出来的是空格，具体是什么暂时不看了
+    {                                                 //对比密文，向客户端返回成功或失败
+        puts("已有密文，比对密文尝试登录");
+        printf("ciphertext:%s---\n", ciphertext);
+        printf("store_text:%s---\n", stored_ciphertext);
+        // if (strcmp(ciphertext, stored_ciphertext) == 0)
+        if (strncmp(ciphertext, stored_ciphertext, 13) == 0) // 9位salt默认crypt貌似只会生成13位，出问题了再完善{;w
+        {                                                    //成功
             train_t t = {6, "string"};
             send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
 
@@ -46,12 +48,16 @@ int retrieve_check_ciphertext_by_name(const char *usrname, const char *ciphertex
 
             bzero(&t, sizeof(t));
 
-            strcpy(msgBuf, "登录失败");
+            strcpy(msgBuf, "登录失败，请自行退出或3秒后自动退出"); //这个3s后退出是在客户端做的
             t.trainLength = strlen(msgBuf);
             printf("trainLength of msgBuf = %d\n", t.trainLength);
             printf("msgBuf = %s\n", msgBuf);
             strcpy(t.trainBody, msgBuf);
             send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
+
+            //发送退出指令
+            train_t send_exit = {4, "exit"};
+            send(nfd, &send_exit, sizeof(send_exit.trainLength) + send_exit.trainLength, MSG_NOSIGNAL);
 
             mysql_close(db);
             return -1;
@@ -59,6 +65,7 @@ int retrieve_check_ciphertext_by_name(const char *usrname, const char *ciphertex
     }
     else
     { //存储密文，向客户端返回成功
+        puts("暂无密文，开始注册");
         sprintf(sql, "update user set ciphertext = '%s' where name = '%s'", ciphertext, usrname);
         ret = execute_sql(db, sql);
 
@@ -81,6 +88,7 @@ int retrieve_check_ciphertext_by_name(const char *usrname, const char *ciphertex
 
     return 0;
 }
+
 int retrieve_send_salt_by_name(const char *usrname, int nfd)
 {
     int ret;

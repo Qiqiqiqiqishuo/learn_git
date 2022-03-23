@@ -10,7 +10,8 @@ int commandAnalysis(char *command, char *specific)
 
     strcpy(newCommand, word);
     // puts(newCommand);
-    for (int i = 0; i < 8; ++i)
+    // for (int i = 0; i < 8; ++i)这里debug长达晚上到早上第一节课。。。。。。。。。i压根到不了8
+    for (int i = 0; i < 9; ++i)
     {
         if (strcmp(newCommand, commandmap[i]) == 0)
         {

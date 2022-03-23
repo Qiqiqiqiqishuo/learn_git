@@ -117,6 +117,7 @@ int handleEvent(int netFd)
             break;
         case 8: //比对客户端发送过来的密文，进行判断
             // regist(specific);
+            puts("成功进入密文比对处理");
             strcpy(ciphertext, specific);
             int retrieve_check_ciphertext_by_name_ret = retrieve_check_ciphertext_by_name(usrname, ciphertext, netFd);
             printf("成功commandId = %d \n", commandId);

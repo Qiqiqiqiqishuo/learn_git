@@ -138,8 +138,19 @@ int main(int argc, char *argv[])
                     strcpy(t.trainBody, buf);
                     send(sockFd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
                 }
+                else if (strcmp(msgType, "exit") == 0)
+                {
+                    puts("将在3秒后自动退出"); // 20220323.10:17.AM版本，这三秒内用户可以为所欲为
+                    sleep(3);
+                    // exit(EXIT_FAILURE);
+                    exit(EXIT_SUCCESS);
+                    //这样应该会玩坏吧，进程池线程池啥的都不懂，就试一次，暂时不要输错密码吧，可能错多了会给服务端搞崩溃
+                    //但大佬们写的好像很牛，玩不崩
+                }
                 else
+                {
                     recvFile(sockFd);
+                }
             }
         }
     }
