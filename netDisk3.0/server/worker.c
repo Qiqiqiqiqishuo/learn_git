@@ -47,13 +47,15 @@ void *threadFunc(void *parg)
 int handleEvent(int netFd)
 {
     // char pwd[100]="/home/mliuxb/netDisk/threadPool/usr";
-    const int home_id = 4;
-    char pwd[100] = "/"; // pwd除为根目录的情况下一般不以'/'结尾
+
+    // const int home_id = 4;//暂时不用了{}
+
+    // char pwd[100] = "/"; // pwd除为根目录的情况下一般不以'/'结尾
     int pwd_id = 4;
     // char pwdFake[100]="/";
-    char temp[100] = {0};
+    // char temp[100] = {0};
     char usrname[100] = {0};
-    char ciphertext[256] = {0};
+    char ciphertext[256] = {0}; //先不改了，自己写的屎山修不如重写---可以放到具体操作之前或者具体操作里面，不用维持到这个栈帧中浪费内存
 
     while (1)
     {
@@ -79,19 +81,21 @@ int handleEvent(int netFd)
         switch (commandId)
         {
         case 0: //改变路径
-            dirCd(specific, pwd, usrname);
+            // dirCd(specific, pwd, usrname);
+            cd_vfs(usrname, &pwd_id, specific);
+            printf("pwd_id = %d\n", pwd_id);
             printf("commandId=%d\n", commandId);
             break;
         case 1: //创建目录
-            bzero(temp, sizeof(temp));
-            sprintf(temp, "%s/%s", pwd, specific);
-            // puts(temp);
-            // dirMake(temp);
+            // bzero(temp, sizeof(temp));
+            // sprintf(temp, "%s/%s", pwd, specific);
+            //  puts(temp);
+            //  dirMake(temp);
             mkdir_vfs(usrname, pwd_id, specific);
             printf("commandId=%d\n", commandId);
             break;
         case 2: // cd,ls,mkdir类
-            puts(pwd);
+            // puts(pwd);
             printf("pwd_id = %d\n", pwd_id);
             puts("zheli");
             // dirLs(netFd, pwd);
@@ -112,7 +116,7 @@ int handleEvent(int netFd)
             printf("commandId=%d\n", commandId);
             break;
         case 6: //获取当前工作目录
-            dirPwd(netFd, pwd);
+            // dirPwd(netFd, pwd);
             printf("commandId=%d\n", commandId);
             break;
         case 7: //通过收到的用户名处理登录（查salt）/注册（随机生成salt并存数据库）行为，向客户端返回 salt

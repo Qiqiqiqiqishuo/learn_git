@@ -1,5 +1,67 @@
+//数据库同用户同名文件(MD5可能相同也可能不同)问题待文件传输时处理
 #include "headOfServer.h"
 #include "manipulate_mysql.h"
+
+//通过用户名，pwd_id，specific（要切换到的目录）修改pwd_id
+int cd_vfs(const char *usrname, int *pwd_id, const char *specific)
+{
+    const int pwd_id_static = *pwd_id;
+    if (strcmp(specific, "/") == 0)
+    {
+        *pwd_id = 4; //回根目录
+        return 0;
+    }
+    if (strcmp(specific, "~") == 0)
+    {
+        *pwd_id = 4; //回家（根目录）
+        return 0;
+    }
+    if (strcmp(specific, ".") == 0)
+    {
+        return 0; //什么也不做
+    }
+    if (strcmp(specific, "..") == 0 && pwd_id_static == 4)
+    {
+        //在根目录了，什么也不做
+        printf("已经到家了\n");
+        return -1;
+    }
+
+    int ret;
+    char sql[BUFFER_SIZE] = {0};
+    char pwd_id_buf[BUFFER_SIZE] = {0};
+
+    MYSQL *db = mysql_init(NULL);
+    ret = connect_db(db, "localhost", "root", "024680", "nddb", 0, NULL, 0);
+
+    if (strcmp(specific, "..") == 0) //已判断过 pwd_id != 4
+    {
+        sprintf(sql, "select pre_id from vft where id = %d", pwd_id_static);
+    }
+    else
+    {
+        //数据库同用户同名文件(MD5可能相同也可能不同)问题待文件传输时处理
+        sprintf(sql, "select id from vft where filename = '%s' and user = '%s' and pre_id = %d", specific, usrname, pwd_id_static);
+        //数据库同用户同名文件(MD5可能相同也可能不同)问题待文件传输时处理
+    }
+
+    ret = execute_sql(db, sql);
+    int exist_dir = get_result_to_string(db, pwd_id_buf);
+    if (exist_dir)
+    {
+        printf("pwd_id_buf string = %s---\n", pwd_id_buf);
+        printf("pwd_id_buf atoi = %d---", atoi(pwd_id_buf));
+        *pwd_id = atoi(pwd_id_buf);
+        mysql_close(db);
+        return 0;
+    }
+    else
+    {
+        printf("指定目录不存在(不合法)\n");
+        mysql_close(db);
+        return -1;
+    }
+}
 
 int mkdir_vfs(const char *usrname, const int pwd_id, const char *specific)
 {
@@ -14,11 +76,13 @@ int mkdir_vfs(const char *usrname, const int pwd_id, const char *specific)
     if (ret == 0)
     {
         printf("succeed mkdir %s\n", specific);
+        mysql_close(db);
         return 0;
     }
     else
     {
         printf("failed mkdir %s\n", specific);
+        mysql_close(db);
         return -1;
     }
 }
@@ -38,6 +102,7 @@ int ls_vfs(const char *usrname, const int pwd_id, const int nfd)
     if (ret != 0)
     {
         //寄了
+        mysql_close(db);
         return -1;
     }
     else
@@ -53,6 +118,7 @@ int ls_vfs(const char *usrname, const int pwd_id, const int nfd)
         strcpy(t.trainBody, msgBuf);
         send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
     }
+    mysql_close(db);
     return 0;
 }
 
@@ -85,6 +151,7 @@ int ls_vfs_by_usrname_pwd_nfd(const char *usrname, const char *pwd, int nfd)
     if (ret != 0)
     {
         //寄
+        mysql_close(db);
         return -1;
     }
     else
@@ -100,6 +167,7 @@ int ls_vfs_by_usrname_pwd_nfd(const char *usrname, const char *pwd, int nfd)
         strcpy(t.trainBody, msgBuf);
         send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
     }
+    mysql_close(db);
     return 0;
 }
 

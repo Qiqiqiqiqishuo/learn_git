@@ -19,7 +19,12 @@
 //  ------------------------------------------------
 
 // basic_command:
+
+//数据库同用户同名文件(MD5可能相同也可能不同)问题待文件传输时处理；通过用户名，pwd_id（要找的目录的pre_id），specific（要切换到的目录）找到要到的目录id修改pwd_id；数据库同用户同名文件(MD5可能相同也可能不同)问题待文件传输时处理
+int cd_vfs(const char *usrname, int *pwd_id, const char *specific);
+
 int mkdir_vfs(const char *usrname, const int pwd_id, const char *specific);
+
 //改不如重写，写！------------暂时放弃重构该处
 int ls_vfs(const char *usrname, const int pwd_id, const int nfd); //重写！----暂时放弃重构该处
 // int ls_vfs_by_usrname_pwd_nfd(const char *usrname, const char *pwd, int nfd); //当我没说，重构的事情以后再说吧----设计蠢了，弃用
