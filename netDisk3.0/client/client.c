@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
                 if (commandAnalysis(buf, specific) == 3)
                 {
                     char new_specific[100] = {0};
-                    strncpy(new_specific, specific, strlen(specific) - 1);
+                    strncpy(new_specific, specific, strlen(specific) - 1); //盲猜是去掉回车，有时间再来修改
                     fileUpLoad(sockFd, new_specific);
                 }
                 else
@@ -149,6 +149,7 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
+                    //下载文件
                     recvFile(sockFd);
                 }
             }
