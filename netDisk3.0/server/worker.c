@@ -50,7 +50,7 @@ int handleEvent(int netFd)
 
     // const int home_id = 4;//暂时不用了{}
 
-    // char pwd[100] = "/"; // pwd除为根目录的情况下一般不以'/'结尾
+    char pwd[512] = "/"; // pwd除为根目录的情况下一般不以'/'结尾
     int pwd_id = 4;
     // char pwdFake[100]="/";
     // char temp[100] = {0};
@@ -82,7 +82,7 @@ int handleEvent(int netFd)
         {
         case 0: //改变路径
             // dirCd(specific, pwd, usrname);
-            cd_vfs(usrname, &pwd_id, specific);
+            cd_vfs(usrname, &pwd_id, pwd, specific);
             printf("pwd_id = %d\n", pwd_id);
             printf("commandId=%d\n", commandId);
             break;
@@ -117,6 +117,7 @@ int handleEvent(int netFd)
             break;
         case 6: //获取当前工作目录
             // dirPwd(netFd, pwd);
+            pwd_vfs(netFd, pwd);
             printf("commandId=%d\n", commandId);
             break;
         case 7: //通过收到的用户名处理登录（查salt）/注册（随机生成salt并存数据库）行为，向客户端返回 salt

@@ -20,8 +20,9 @@
 
 // basic_command:
 
+int pwd_vfs(const int nfd, const char *pwd);
 //数据库同用户同名文件(MD5可能相同也可能不同)问题待文件传输时处理；通过用户名，pwd_id（要找的目录的pre_id），specific（要切换到的目录）找到要到的目录id修改pwd_id；数据库同用户同名文件(MD5可能相同也可能不同)问题待文件传输时处理
-int cd_vfs(const char *usrname, int *pwd_id, const char *specific);
+int cd_vfs(const char *usrname, int *pwd_id, char *pwd, const char *specific); //记得传地址
 
 int mkdir_vfs(const char *usrname, const int pwd_id, const char *specific);
 

@@ -2,29 +2,65 @@
 #include "headOfServer.h"
 #include "manipulate_mysql.h"
 
+//先搁置，想想在cd中完成对pwd的处理貌似更加合适
+int pwd_vfs(const int nfd, const char *pwd)
+{
+    char check_out_path[BUFFER_SIZE] = {0};
+    getcwd(check_out_path, BUFFER_SIZE);
+    puts(check_out_path);
+
+    int ret;
+    char msgBuf[BUFFER_SIZE] = {0};
+    strcpy(msgBuf, pwd);
+
+    train_t t = {6, "string"};
+    send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
+    printf("t.trainLength = %d---\n", t.trainLength);
+    bzero(&t, sizeof(t));
+    t.trainLength = strlen(msgBuf);
+    printf("t.trainLength = %d---\n", t.trainLength);
+    puts(msgBuf);
+    strcpy(t.trainBody, msgBuf);
+    send(nfd, &t, sizeof(t.trainLength) + t.trainLength, MSG_NOSIGNAL);
+
+    return 0;
+}
+
 //通过用户名，pwd_id，specific（要切换到的目录）修改pwd_id
-int cd_vfs(const char *usrname, int *pwd_id, const char *specific)
+int cd_vfs(const char *usrname, int *pwd_id, char *pwd, const char *specific)
 {
     const int pwd_id_static = *pwd_id;
+    int upward = 0;
+
     if (strcmp(specific, "/") == 0)
     {
         *pwd_id = 4; //回根目录
+        strcpy(pwd, "/");
+        printf("pwd : ---%s---\n", pwd);
         return 0;
     }
     if (strcmp(specific, "~") == 0)
     {
         *pwd_id = 4; //回家（根目录）
+        strcpy(pwd, "/");
+        printf("pwd : ---%s---\n", pwd);
         return 0;
     }
     if (strcmp(specific, ".") == 0)
     {
+        printf("pwd : ---%s---\n", pwd);
         return 0; //什么也不做
     }
-    if (strcmp(specific, "..") == 0 && pwd_id_static == 4)
+    if (strcmp(specific, "..") == 0)
     {
-        //在根目录了，什么也不做
-        printf("已经到家了\n");
-        return -1;
+        if (pwd_id_static == 4)
+        {
+            //在根目录了，什么也不做
+            printf("已经到家了\n");
+            printf("pwd : ---%s---\n", pwd);
+            return -1;
+        }
+        upward = 1;
     }
 
     int ret;
@@ -34,11 +70,11 @@ int cd_vfs(const char *usrname, int *pwd_id, const char *specific)
     MYSQL *db = mysql_init(NULL);
     ret = connect_db(db, "localhost", "root", "024680", "nddb", 0, NULL, 0);
 
-    if (strcmp(specific, "..") == 0) //已判断过 pwd_id != 4
+    if (upward)
     {
         sprintf(sql, "select pre_id from vft where id = %d", pwd_id_static);
     }
-    else
+    else //上面的“向上”条件满足后对pwd字符串处理寄到后面了，省的以后太难看懂---这里并不知道cd是否合法，不能向上面的“向上”（已判断过合法）一样现在就处理pwd字符串了
     {
         //数据库同用户同名文件(MD5可能相同也可能不同)问题待文件传输时处理
         sprintf(sql, "select id from vft where filename = '%s' and user = '%s' and pre_id = %d", specific, usrname, pwd_id_static);
@@ -48,17 +84,40 @@ int cd_vfs(const char *usrname, int *pwd_id, const char *specific)
     ret = execute_sql(db, sql);
     int exist_dir = get_result_to_string(db, pwd_id_buf);
     if (exist_dir)
-    {
+    { //成功切换目录
         printf("pwd_id_buf string = %s---\n", pwd_id_buf);
-        printf("pwd_id_buf atoi = %d---", atoi(pwd_id_buf));
+        printf("pwd_id_buf atoi = %d---\n", atoi(pwd_id_buf));
         *pwd_id = atoi(pwd_id_buf);
+
         mysql_close(db);
+
+        //太杂乱了，以后再重构吧
+        if (upward) //满足向上条件，pwd至少存在两个'/'
+        {
+            printf("original pwd : ---%s---\n", pwd);
+            int ptr = strlen(pwd) - 2;
+            while (pwd[ptr] != '/')
+            {
+                --ptr;
+            }
+            pwd[++ptr] = 0;
+            printf("modified pwd : ---%s---\n", pwd);
+        }
+        else
+        {
+            printf("original pwd : ---%s---\n", pwd);
+            strcat(pwd, specific);
+            strcat(pwd, "/");
+            printf("modified pwd : ---%s---\n", pwd);
+        }
+
         return 0;
     }
     else
     {
-        printf("指定目录不存在(不合法)\n");
         mysql_close(db);
+        printf("指定目录不存在(不合法)\n");
+        printf("pwd : ---%s---\n", pwd);
         return -1;
     }
 }
