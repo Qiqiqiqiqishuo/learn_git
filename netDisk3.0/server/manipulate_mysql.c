@@ -1,3 +1,4 @@
+//先把文件相关内容做完再考虑写删除文件的功能---暂不提供文件夹删除功能，仅能删除文件
 //数据库同用户同名文件(MD5可能相同也可能不同)问题待文件传输时处理
 #include "headOfServer.h"
 #include "manipulate_mysql.h"
