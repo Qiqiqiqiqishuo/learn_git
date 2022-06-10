@@ -26,7 +26,7 @@ void *threadFunc(void *parg)
         pthread_mutex_lock(&pThreadPool->mutex);
         pthread_cleanup_push(unlock, &pThreadPool->mutex);
         while (pThreadPool->taskQueue.size == 0 && pThreadPool->isThreadPoolRunning == 1)
-        {
+        { // 有序退出
             pthread_cond_wait(&pThreadPool->cond, &pThreadPool->mutex);
         }
         if (pThreadPool->isThreadPoolRunning == 0)
@@ -103,7 +103,7 @@ int handleEvent(int netFd)
             ls_vfs(usrname, pwd_id, netFd);
             printf("commandId=%d\n", commandId);
             break;
-        case 3: //上传文件
+        case 3: //客户端要上传文件
             fileUpLoad(netFd);
             printf("%d\n", commandId);
             break;

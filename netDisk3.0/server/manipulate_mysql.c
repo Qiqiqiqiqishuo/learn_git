@@ -1,3 +1,7 @@
+// 数据库的 host，userName，passwd等使用 全局变量便于修改？？？或者使用宏也好？？？
+// 还好这次只是改了个密码，不然修改一条属性需要改好多次
+// 暂时能用，先不管了
+
 //"盐"和"密文"都是定时炸弹
 //先把文件相关内容做完再考虑写删除文件的功能---暂不提供文件夹删除功能，仅能删除文件
 //数据库同用户同名文件(MD5可能相同也可能不同)问题待文件传输时处理
@@ -70,7 +74,7 @@ int cd_vfs(const char *usrname, int *pwd_id, char *pwd, const char *specific)
     char pwd_id_buf[BUFFER_SIZE] = {0};
 
     MYSQL *db = mysql_init(NULL);
-    ret = connect_db(db, "localhost", "root", "024680", "nddb", 0, NULL, 0);
+    ret = connect_db(db, "localhost", "root", "84620", "nddb", 0, NULL, 0);
 
     if (upward)
     {
@@ -130,7 +134,7 @@ int mkdir_vfs(const char *usrname, const int pwd_id, const char *specific)
     char sql[BUFFER_SIZE] = {0};
 
     MYSQL *db = mysql_init(NULL);
-    ret = connect_db(db, "localhost", "root", "024680", "nddb", 0, NULL, 0);
+    ret = connect_db(db, "localhost", "root", "84620", "nddb", 0, NULL, 0);
 
     sprintf(sql, "insert into vft values(default, '%s', %d, 'd', '%s', default, default, default)", specific, pwd_id, usrname);
     ret = execute_sql(db, sql);
@@ -155,7 +159,7 @@ int ls_vfs(const char *usrname, const int pwd_id, const int nfd)
     char msgBuf[BUFFER_SIZE] = {0};
 
     MYSQL *db = mysql_init(NULL);
-    ret = connect_db(db, "localhost", "root", "024680", "nddb", 0, NULL, 0); //内已含报错，暂不处理错误
+    ret = connect_db(db, "localhost", "root", "84620", "nddb", 0, NULL, 0); //内已含报错，暂不处理错误
 
     sprintf(sql, "select filename from vft where pre_id = %d and user = '%s'", pwd_id, usrname);
     ret = execute_sql(db, sql);
@@ -197,7 +201,7 @@ int ls_vfs_by_usrname_pwd_nfd(const char *usrname, const char *pwd, int nfd)
     puts(curAbsPath); //仅用于服务端提示
 
     MYSQL *db = mysql_init(NULL);
-    ret = connect_db(db, "localhost", "root", "024680", "nddb", 0, NULL, 0);
+    ret = connect_db(db, "localhost", "root", "84620", "nddb", 0, NULL, 0);
 
     sprintf(sql, "select id from vft where filename = '%s' and (user = '%s' or user = 'root')", pwd, usrname);
     ret = execute_sql(db, sql);
@@ -241,7 +245,7 @@ int retrieve_check_ciphertext_by_name(const char *usrname, const char *ciphertex
     char msgBuf[BUFFER_SIZE] = {0};
 
     MYSQL *db = mysql_init(NULL);
-    ret = connect_db(db, "localhost", "root", "024680", "nddb", 0, NULL, 0);
+    ret = connect_db(db, "localhost", "root", "84620", "nddb", 0, NULL, 0);
 
     sprintf(sql, "select ciphertext from user where name = '%s'", usrname);
     ret = execute_sql(db, sql);
@@ -328,7 +332,7 @@ int retrieve_send_salt_by_name(const char *usrname, int nfd)
     char salt[123] = {0};
 
     MYSQL *db = mysql_init(NULL);
-    ret = connect_db(db, "localhost", "root", "024680", "nddb", 0, NULL, 0);
+    ret = connect_db(db, "localhost", "root", "84620", "nddb", 0, NULL, 0);
 
     sprintf(sql, "select name from user where name = '%s'", usrname);
     ret = execute_sql(db, sql);
@@ -402,7 +406,7 @@ int retrieve_user_by_name(const char *usrname)
     char resBuf[BUFFER_SIZE] = {0};
 
     MYSQL *db = mysql_init(NULL);
-    ret = connect_db(db, "localhost", "root", "024680", "nddb", 0, NULL, 0);
+    ret = connect_db(db, "localhost", "root", "84620", "nddb", 0, NULL, 0);
 
     sprintf(sql, "select name from user where name = '%s'", usrname);
     ret = execute_sql(db, sql);
@@ -566,7 +570,10 @@ int execute_sql_output(MYSQL *mysql, const char *sql)
 
 int connect_db(MYSQL *mysql, const char *host, const char *user, const char *passwd, const char *db, unsigned int port, const char *unix_socket, unsigned long client_flag)
 {
-    MYSQL *mysqlRet = mysql_real_connect(mysql, host, user, passwd, db, port, unix_socket, client_flag);
+    // MYSQL *mysqlRet = mysql_real_connect(mysql, host, user, passwd, db, port, unix_socket, client_flag);
+    // 这里 把 参数写死了，便于修改，
+    // 如果需要修改，直接改下面这行的参数，如果各个操作需要连接不同的数据库，重新启用上面那行，调用时传入具体参数
+    MYSQL *mysqlRet = mysql_real_connect(mysql, "localhost", "root", "84620", "nddb", 0, NULL, 0);
     if (mysqlRet != NULL)
     {
         printf("mysql = %p, mysqlRet = %p\n", mysql, mysqlRet);

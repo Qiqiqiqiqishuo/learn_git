@@ -6,7 +6,7 @@
 
 int main(int argc, char *argv[])
 {
-    //./client 192.168.119.128 1234
+    //./client 101.42.137.48 5783
     printf("用户名：");
     char usrname[10] = {0};
     scanf("%s", usrname);
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
                 {
                     char new_specific[100] = {0};
                     strncpy(new_specific, specific, strlen(specific) - 1); //盲猜是去掉回车，有时间再来修改
-                    fileUpLoad(sockFd, new_specific);
+                    fileUpLoad(sockFd, new_specific);                      // 传入 fd 和 文件名
                 }
                 else
                 {

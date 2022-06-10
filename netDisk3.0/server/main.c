@@ -11,7 +11,7 @@ void sigFunc(int signum)
 }
 int main(int argc, char *argv[])
 {
-    //./server 192.168.138.128 1234 4
+    //./server 10.0.24.5 5783 4
     ARGS_CHECK(argc, 4);
     pipe(exitPipe);
     if (fork() != 0)
